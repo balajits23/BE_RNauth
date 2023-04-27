@@ -1,19 +1,22 @@
 const express = require("express");
 const bodyparser = require("body-parser");
 const app = express();
+const cors = require("cors");
 
-const port = 5000;
+const port = 9000;
 
 require("./db");
 require("./models/User");
 
 const authRoutes = require("./routes/authRoutes");
+const requireToken = require("./middlewares/requireToken");
 
+app.use(cors());
 app.use(bodyparser.json());
 app.use(authRoutes);
 
-app.get("/", (req, res) => {
-  res.send("This is a home page");
+app.get("/", requireToken, (req, res) => {
+  res.send(req.user);
 });
 
 app.listen(port, () => {
